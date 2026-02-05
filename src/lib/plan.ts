@@ -1,10 +1,7 @@
+
 import { getBooks, getBook } from "./bible";
 
 // Total chapters in the Protestant Bible is 1189
-// We map every chapter to a global index from 0 to 1188
-// 0 = Genesis 1
-// 1188 = Revelation 22
-
 export interface GlobalChapter {
     globalIndex: number;
     bookAbbrev: string;
@@ -15,19 +12,15 @@ export interface GlobalChapter {
 export interface ReadingRange {
     start: GlobalChapter;
     end: GlobalChapter;
-    isFinished: boolean; // true if end index >= 1188
+    isFinished: boolean;
 }
 
-// Cache this to avoid recalculating every time
 let _chapterMap: GlobalChapter[] | null = null;
-
 function getChapterMap(): GlobalChapter[] {
     if (_chapterMap) return _chapterMap;
-
     const books = getBooks();
     const map: GlobalChapter[] = [];
     let currentIndex = 0;
-
     books.forEach(book => {
         for (let c = 1; c <= book.chapterCount; c++) {
             map.push({
@@ -39,7 +32,6 @@ function getChapterMap(): GlobalChapter[] {
             currentIndex++;
         }
     });
-
     _chapterMap = map;
     return map;
 }
@@ -54,28 +46,35 @@ export function getChapterFromGlobalIndex(index: number): GlobalChapter | null {
     return map[index];
 }
 
-// Calculate what valid range of chapters to read for a given day
-// startGlobalIndex: The index the user is currently at (has NOT read yet)
-// daysRemaining: How many days left in the plan (including today)
-// targetEndDate: Not strictly needed if we recalculate dynamically based on remaining work
-export function calculateOneDayReading(currentGlobalIndex: number, daysRemaining: number): ReadingRange | null {
+// Fixed Daily Target Calculation
+export function calculateDailyTarget(daysPassed: number, durationDays: number): number {
     const totalChapters = getTotalChapters();
-    const chaptersRemaining = totalChapters - currentGlobalIndex;
+    if (daysPassed > durationDays) return totalChapters - 1;
 
-    if (chaptersRemaining <= 0) return null;
-    if (daysRemaining <= 0) return null; // Should not happen if plan is active
+    // Day 1: ceil(13.2 * 1) - 1 = 13.
+    // Day 90: ceil(13.2 * 90) - 1 = 1188.
+    const chunks = totalChapters / durationDays;
+    let targetIndex = Math.ceil(chunks * daysPassed) - 1;
 
-    // Simple even distribution: ceil(remaining / days)
-    // e.g. 100 chaps / 10 days = 10 day
-    // 100 chaps / 9 days = 11.11 -> 12 per day
-    const chaptersToday = Math.ceil(chaptersRemaining / daysRemaining);
+    if (targetIndex >= totalChapters) targetIndex = totalChapters - 1;
+    return targetIndex;
+}
 
+// Determine range for "Today" based on schedule
+export function calculateTodayRange(currentGlobalIndex: number, daysPassed: number, durationDays: number): ReadingRange | null {
+    const totalChapters = getTotalChapters();
+
+    // Start is where user is currently
     const startIndex = currentGlobalIndex;
-    let endIndex = startIndex + chaptersToday - 1;
 
-    // Cap at last chapter
-    if (endIndex >= totalChapters - 1) {
-        endIndex = totalChapters - 1;
+    // End is the fixed target for today
+    let endIndex = calculateDailyTarget(daysPassed, durationDays);
+
+    // If user is ahead of schedule (current > target), give at least one chapter?
+    // Or stick to schedule? If ahead, target is "already passed".
+    // Let's say if current > target, we just show next single chapter as impromptu.
+    if (startIndex > endIndex) {
+        endIndex = startIndex;
     }
 
     const startInfo = getChapterFromGlobalIndex(startIndex);

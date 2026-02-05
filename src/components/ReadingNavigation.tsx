@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Home, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getBooks } from "@/lib/bible";
-import { calculateOneDayReading, getTotalChapters } from "@/lib/plan";
+import { getTotalChapters } from "@/lib/plan";
 
 interface ReadingNavigationProps {
     bookAbbrev: string;
@@ -62,12 +62,10 @@ export function ReadingNavigation({ bookAbbrev, chapter, prevChapter, nextChapte
                     const start = new Date(plan.startDate);
                     const now = new Date();
                     const diffTime = Math.abs(now.getTime() - start.getTime());
-                    const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    let daysRemaining = plan.durationDays - (daysPassed - 1);
-                    if (daysRemaining < 1) daysRemaining = 1;
+                    const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // 1-based day number
 
-                    const range = calculateOneDayReading(plan.currentGlobalIndex, daysRemaining);
-                    const isLastChapterOfDay = range?.end.globalIndex === plan.currentGlobalIndex;
+                    const targetIndex = Math.ceil((1189 / plan.durationDays) * daysPassed) - 1;
+                    const isLastChapterOfDay = plan.currentGlobalIndex === targetIndex;
 
                     // Update Plan
                     const newPlan = {

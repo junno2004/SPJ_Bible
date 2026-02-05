@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { calculateOneDayReading, getChapterFromGlobalIndex, getTotalChapters, ReadingRange } from "@/lib/plan";
+import { calculateTodayRange, getChapterFromGlobalIndex, getTotalChapters, ReadingRange } from "@/lib/plan";
 import { MoveRight, CheckCircle, Calendar, RefreshCcw } from "lucide-react";
 
 interface PlanState {
@@ -36,22 +36,12 @@ export default function ReadingPlanPage() {
     const calculateToday = (currentPlan: PlanState) => {
         if (!currentPlan) return;
 
-        // Calculate days passed since start
         const start = new Date(currentPlan.startDate);
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - start.getTime());
-        const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // 1-based
 
-        // Days remaining logic:
-        // Originally: Duration - DaysPassed + 1?
-        // Let's make it simpler: We want to finish in {Duration}.
-        // If we represent strict schedule, we just divide remaining chapters by remaining days.
-        // If user is ahead/behind, this dynamic calculation adjusts the load.
-
-        let daysRemaining = currentPlan.durationDays - (daysPassed - 1);
-        if (daysRemaining < 1) daysRemaining = 1; // Minimum 1 day to execute
-
-        const range = calculateOneDayReading(currentPlan.currentGlobalIndex, daysRemaining);
+        const range = calculateTodayRange(currentPlan.currentGlobalIndex, daysPassed, currentPlan.durationDays);
         setTodayRange(range);
     };
 

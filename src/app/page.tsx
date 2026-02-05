@@ -17,7 +17,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-stone-900 dark:text-stone-100">
             준노의 Bible
           </h1>
-          <p className="text-stone-500 text-lg">매일의 말씀과 함께 시작하세요</p>
+          <p className="text-stone-500 text-lg">매일 말씀과 함께 시작하세요</p>
         </header>
 
         {/* Verse of the Day Card */}

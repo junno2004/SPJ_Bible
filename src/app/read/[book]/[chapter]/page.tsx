@@ -3,6 +3,7 @@ import { getBook, getChapter, getBooks } from "@/lib/bible";
 import { notFound } from "next/navigation";
 import { VerseList } from "@/components/VerseList";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PlanNavigator } from "@/components/PlanNavigator";
 
 export async function generateStaticParams() {
     const books = getBooks();
@@ -52,29 +53,12 @@ export default async function ChapterView({
 
             <VerseList verses={verses} bookAbbrev={book.abbrev} chapter={chapterNum} />
 
-            <nav className="mt-12 flex justify-between items-center border-t border-stone-200 dark:border-stone-800 pt-8">
-                {prevChapter ? (
-                    <Link
-                        href={`/read/${bookAbbrev}/${prevChapter}`}
-                        className="px-6 py-3 border border-stone-300 dark:border-stone-700 rounded-lg text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 transition-colors"
-                    >
-                        &larr; {prevChapter}장
-                    </Link>
-                ) : (
-                    <div /> // Spacer
-                )}
-
-                {nextChapter ? (
-                    <Link
-                        href={`/read/${bookAbbrev}/${nextChapter}`}
-                        className="px-6 py-3 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 rounded-lg hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors shadow-lg"
-                    >
-                        {nextChapter}장 &rarr;
-                    </Link>
-                ) : (
-                    <div />
-                )}
-            </nav>
+            <PlanNavigator
+                bookAbbrev={book.abbrev}
+                chapter={chapterNum}
+                prevChapter={prevChapter}
+                nextChapter={nextChapter}
+            />
         </div>
     );
 }

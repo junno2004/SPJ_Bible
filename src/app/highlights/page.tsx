@@ -101,7 +101,7 @@ export default function HighlightsPage() {
                         &larr; 홈으로
                     </Link>
                     <h1 className="text-xl md:text-2xl font-bold text-stone-900 dark:text-stone-100">
-                        내 형광펜 구절
+                        마음에 새긴 말씀
                     </h1>
                 </div>
                 <ThemeToggle />

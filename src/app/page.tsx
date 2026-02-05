@@ -53,7 +53,7 @@ export default function Home() {
             href="/highlights"
             className="px-8 py-4 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-100 border border-yellow-200 dark:border-yellow-900/50 rounded-xl font-medium text-lg hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-all shadow-sm hover:shadow-md active:scale-95 w-full flex items-center justify-center"
           >
-            마음에 새긴 말씀 💖
+            마음에 새긴 말씀
           </Link>
         </div>
       </div>

@@ -40,7 +40,13 @@ export function cleanText(text: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+    .replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&middot;/g, '·')
+    .replace(/&#8217;/g, "'")
+    .replace(/&#8220;/g, '"')
+    .replace(/&#8221;/g, '"');
 }
 
 export function getChapter(bookName: string, chapterIndex: number): string[] | undefined {

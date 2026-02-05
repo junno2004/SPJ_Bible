@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Home, CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getBooks } from "@/lib/bible";
+import { calculateOneDayReading, getTotalChapters } from "@/lib/plan";
 
 interface ReadingNavigationProps {
     bookAbbrev: string;
@@ -52,17 +53,33 @@ export function ReadingNavigation({ bookAbbrev, chapter, prevChapter, nextChapte
     }, [bookAbbrev, chapter]);
 
     const handleNextWithComplete = () => {
-        // Update local storage
         const saved = localStorage.getItem("bible-reading-plan-v1");
         if (saved) {
             try {
                 const plan = JSON.parse(saved);
                 if (planStatus?.isTargetChapter) {
+                    // Calculate if this is the last chapter of the day
+                    const start = new Date(plan.startDate);
+                    const now = new Date();
+                    const diffTime = Math.abs(now.getTime() - start.getTime());
+                    const daysPassed = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    let daysRemaining = plan.durationDays - (daysPassed - 1);
+                    if (daysRemaining < 1) daysRemaining = 1;
+
+                    const range = calculateOneDayReading(plan.currentGlobalIndex, daysRemaining);
+                    const isLastChapterOfDay = range?.end.globalIndex === plan.currentGlobalIndex;
+
+                    // Update Plan
                     const newPlan = {
                         ...plan,
                         currentGlobalIndex: plan.currentGlobalIndex + 1
                     };
                     localStorage.setItem("bible-reading-plan-v1", JSON.stringify(newPlan));
+
+                    if (isLastChapterOfDay) {
+                        router.push("/reading-plan");
+                        return;
+                    }
                 }
             } catch (e) {
                 console.error(e);
@@ -125,8 +142,8 @@ export function ReadingNavigation({ bookAbbrev, chapter, prevChapter, nextChapte
                         onClick={() => prevChapter && router.push(`/read/${bookAbbrev}/${prevChapter}`)}
                         disabled={!prevChapter}
                         className={`p-2 rounded-lg transition-colors ${prevChapter
-                                ? 'text-stone-600 hover:bg-stone-100'
-                                : 'text-stone-300 cursor-not-allowed'
+                            ? 'text-stone-600 hover:bg-stone-100'
+                            : 'text-stone-300 cursor-not-allowed'
                             }`}
                     >
                         <ChevronLeft className="w-6 h-6" />
@@ -145,8 +162,8 @@ export function ReadingNavigation({ bookAbbrev, chapter, prevChapter, nextChapte
                             onClick={() => nextChapter && router.push(`/read/${bookAbbrev}/${nextChapter}`)}
                             disabled={!nextChapter}
                             className={`p-2 rounded-lg transition-colors ${nextChapter
-                                    ? 'text-stone-600 hover:bg-stone-100'
-                                    : 'text-stone-300 cursor-not-allowed'
+                                ? 'text-stone-600 hover:bg-stone-100'
+                                : 'text-stone-300 cursor-not-allowed'
                                 }`}
                         >
                             <ChevronRight className="w-6 h-6" />

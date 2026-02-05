@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getBook, getBooks } from "@/lib/bible";
 import { redirect, notFound } from "next/navigation";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export async function generateStaticParams() {
     const books = getBooks();
@@ -29,7 +29,7 @@ export default async function ChapterSelection({ params }: { params: Promise<{ b
                     <h1 className="text-3xl font-bold text-stone-900 dark:text-stone-100">{book.koName}</h1>
                     <p className="text-stone-500 mt-2">장을 선택하세요</p>
                 </div>
-                <ThemeToggle />
+
             </header>
 
             <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-3">

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { getBook, getChapter, getBooks } from "@/lib/bible";
 import { notFound } from "next/navigation";
 import { VerseList } from "@/components/VerseList";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { PlanNavigator } from "@/components/PlanNavigator";
+
+import { ReadingNavigation } from "@/components/ReadingNavigation";
 
 export async function generateStaticParams() {
     const books = getBooks();
@@ -20,45 +20,44 @@ export default async function ChapterView({
 }: {
     params: Promise<{ book: string; chapter: string }>;
 }) {
-    const { book: bookAbbrev, chapter: chapterStr } = await params;
-    const chapterNum = parseInt(chapterStr, 10);
+    const { book: bookAbbrev, chapter } = await params;
+    const book = getBook(bookAbbrev);
 
-    if (isNaN(chapterNum)) notFound();
+    if (!book) {
+        notFound();
+    }
 
-    const book = getBook(decodeURIComponent(bookAbbrev));
-    if (!book) notFound();
+    const chapterNum = parseInt(chapter, 10);
+    const verses = book.chapters[chapterNum - 1]; // 0-indexed
 
-    const verses = getChapter(book.name, chapterNum);
-    if (!verses) notFound();
+    if (!verses) {
+        notFound();
+    }
 
     const prevChapter = chapterNum > 1 ? chapterNum - 1 : null;
     const nextChapter = chapterNum < book.chapters.length ? chapterNum + 1 : null;
 
     return (
-        <div className="max-w-3xl mx-auto p-6 md:p-12 mb-20">
-            <header className="mb-8 flex items-center justify-between sticky top-0 bg-stone-50/95 dark:bg-stone-950/95 backdrop-blur-sm py-4 border-b border-stone-200 dark:border-stone-800 z-10 transition-colors duration-300">
-                <div className="flex items-center gap-4">
-                    <Link
-                        href={`/read/${bookAbbrev}`}
-                        className="text-stone-500 hover:text-stone-900 dark:hover:text-stone-300 transition-colors"
-                    >
-                        &larr; 목록
-                    </Link>
-                    <h1 className="text-xl md:text-2xl font-bold text-stone-900 dark:text-stone-100">
-                        {book.koName} {chapterNum}장
-                    </h1>
-                </div>
-                <ThemeToggle />
-            </header>
-
-            <VerseList verses={verses} bookAbbrev={book.abbrev} chapter={chapterNum} />
-
-            <PlanNavigator
+        <div className="min-h-screen bg-stone-50 text-stone-900 transition-colors duration-300 pb-20">
+            {/* Sticky Navigation Header */}
+            <ReadingNavigation
                 bookAbbrev={book.abbrev}
                 chapter={chapterNum}
                 prevChapter={prevChapter}
                 nextChapter={nextChapter}
             />
+
+            {/* Main Content */}
+            <div className="max-w-2xl mx-auto px-6 py-8">
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-stone-900">{book.koName} {chapterNum}장</h1>
+                </div>
+
+                <VerseList verses={verses} bookAbbrev={book.abbrev} chapter={chapterNum} />
+
+                {/* Bottom Spacer/Footer for easier scrolling */}
+                <div className="h-20" />
+            </div>
         </div>
     );
 }

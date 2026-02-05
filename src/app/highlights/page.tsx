@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getBook, getBooks, cleanText } from "@/lib/bible";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 interface HighlightedVerse {
     bookAbbrev: string;
@@ -104,7 +104,7 @@ export default function HighlightsPage() {
                         마음에 새긴 말씀
                     </h1>
                 </div>
-                <ThemeToggle />
+
             </header>
 
             {highlights.length === 0 ? (

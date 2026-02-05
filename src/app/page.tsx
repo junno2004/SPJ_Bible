@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { getRandomVerse } from "@/lib/bible";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export default function Home() {
   const verse = getRandomVerse();
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8 bg-stone-50 dark:bg-stone-950 transition-colors duration-300">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+
 
       <div className="max-w-2xl w-full space-y-12 text-center">
         {/* Header / Logo */}

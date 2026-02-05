@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { searchBible } from "@/lib/bible";
 import { Suspense, useState, useEffect } from "react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 import { useSearchParams, useRouter } from "next/navigation";
 
 function SearchContent() {
@@ -58,7 +58,7 @@ function SearchContent() {
                     </form>
                 </div>
                 <div className="ml-4">
-                    <ThemeToggle />
+
                 </div>
             </header>
 

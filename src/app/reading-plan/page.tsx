@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
 import { calculateOneDayReading, getChapterFromGlobalIndex, getTotalChapters, ReadingRange } from "@/lib/plan";
 import { MoveRight, CheckCircle, Calendar, RefreshCcw } from "lucide-react";
 
@@ -117,7 +117,7 @@ export default function ReadingPlanPage() {
                         성경 1독 도전 🏃
                     </h1>
                 </div>
-                <ThemeToggle />
+
             </header>
 
             <main className="max-w-2xl mx-auto px-6 pt-28 pb-20">

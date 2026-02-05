@@ -55,6 +55,12 @@ export default function Home() {
           >
             마음에 새긴 말씀
           </Link>
+          <Link
+            href="/reading-plan"
+            className="px-8 py-4 bg-green-100 dark:bg-green-900/30 text-green-900 dark:text-green-100 border border-green-200 dark:border-green-900/50 rounded-xl font-medium text-lg hover:bg-green-200 dark:hover:bg-green-900/50 transition-all shadow-sm hover:shadow-md active:scale-95 w-full flex items-center justify-center"
+          >
+            성경 1독 도전 🏃
+          </Link>
         </div>
       </div>
     </main>

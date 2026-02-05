@@ -1,16 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { searchBible } from "@/lib/bible";
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useSearchParams, useRouter } from "next/navigation";
 
-export default async function SearchPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ q?: string }>;
-}) {
-    const { q } = await searchParams;
-    const query = q || "";
-    const results = query ? searchBible(query) : [];
+function SearchContent() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const q = searchParams.get("q");
+    const [query, setQuery] = useState(q || "");
+    const [results, setResults] = useState<ReturnType<typeof searchBible>>([]);
+
+    useEffect(() => {
+        if (q) {
+            setQuery(q);
+            setResults(searchBible(q));
+        } else {
+            setResults([]);
+        }
+    }, [q]);
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newQuery = formData.get("q") as string;
+        if (newQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(newQuery.trim())}`);
+        }
+    };
 
     return (
         <div className="max-w-4xl mx-auto p-6 md:p-12 min-h-screen">
@@ -21,7 +40,7 @@ export default async function SearchPage({
                     </Link>
                     <h1 className="text-3xl font-bold text-stone-900 dark:text-stone-100 mb-6">성경 검색</h1>
 
-                    <form action="/search" method="get" className="flex gap-2 max-w-2xl">
+                    <form onSubmit={handleSearch} className="flex gap-2 max-w-2xl">
                         <input
                             type="text"
                             name="q"
@@ -60,7 +79,7 @@ export default async function SearchPage({
                     {results.slice(0, 100).map((result, i) => ( // Limit to 100 for render perf
                         <Link
                             key={i}
-                            href={`/read/${encodeURIComponent(result.book)}/${result.chapter}`}
+                            href={`/read/${result.book}/${result.chapter}`}
                             className="block p-6 bg-white dark:bg-stone-900 rounded-xl shadow-sm border border-stone-100 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-md transition-all group"
                         >
                             <div className="flex justify-between items-baseline mb-2">
@@ -90,5 +109,13 @@ export default async function SearchPage({
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function SearchPage() {
+    return (
+        <Suspense fallback={<div className="p-12 text-center">Loading...</div>}>
+            <SearchContent />
+        </Suspense>
     );
 }

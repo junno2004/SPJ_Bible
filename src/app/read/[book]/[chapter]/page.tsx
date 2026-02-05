@@ -1,8 +1,18 @@
 import Link from "next/link";
-import { getBook, getChapter } from "@/lib/bible";
+import { getBook, getChapter, getBooks } from "@/lib/bible";
 import { notFound } from "next/navigation";
 import { VerseList } from "@/components/VerseList";
 import { ThemeToggle } from "@/components/ThemeToggle";
+
+export async function generateStaticParams() {
+    const books = getBooks();
+    return books.flatMap((book) =>
+        Array.from({ length: book.chapterCount }, (_, i) => ({
+            book: book.abbrev,
+            chapter: String(i + 1),
+        }))
+    );
+}
 
 export default async function ChapterView({
     params,

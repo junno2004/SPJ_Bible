@@ -16,7 +16,7 @@ const notoSerifKr = Noto_Serif_KR({
 });
 
 export const metadata: Metadata = {
-  title: "성경 (Bible)",
+  title: "준노의 Bible",
   description: "Modern Korean Bible Reading Application",
 };
 

@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { getBook } from "@/lib/bible";
+import { getBook, getBooks } from "@/lib/bible";
 import { redirect, notFound } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Define helper to generate params (Next.js 15 requires async params, but let's check current version/types)
-// Assuming regular Page props for now. If params are promised based, we need to await.
-// Next.js 15 made params async. I should handle that properly. 
-// However, simple export defaults usually get awaited params in latest types if defined as async fn.
+export async function generateStaticParams() {
+    const books = getBooks();
+    return books.map((book) => ({
+        book: book.abbrev,
+    }));
+}
 
 export default async function ChapterSelection({ params }: { params: Promise<{ book: string }> }) {
     const { book: bookAbbrev } = await params;

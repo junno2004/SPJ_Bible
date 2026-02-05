@@ -34,7 +34,7 @@ export function getBook(nameOrAbbrev: string): BibleBook | undefined {
   );
 }
 
-function cleanText(text: string): string {
+export function cleanText(text: string): string {
   return text
     .replace(/&#x27;/g, "'")
     .replace(/&quot;/g, '"')

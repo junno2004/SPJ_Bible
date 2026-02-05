@@ -32,4 +32,7 @@
 ## 배포
 
 이 프로젝트는 Cloudflare Pages를 통해 정적 웹사이트로 배포됩니다.
+
+- **배포 URL**: [https://spj-bible.pages.dev](https://spj-bible.pages.dev)
+
 `npm run build` 명령어를 통해 `out` 디렉토리에 정적 파일이 생성됩니다.
